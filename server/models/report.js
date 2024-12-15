@@ -14,7 +14,7 @@ const reportSchema = new mongoose.Schema({
 	},
 	typeId: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Keyword',
+		ref: 'Type',
 		required: true
 	},
 	userId: {

@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
 	cin: {
 		type: String,
 		length: 8,
-		required: true
+		required: false
 	},
 	phoneNumber: {
 		type: String,

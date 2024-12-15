@@ -17,6 +17,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use('/state', require('./routes/state'));
+app.use('/municipality', require('./routes/municipality'));
+app.use('/user', require('./routes/user'));
+app.use('/type', require('./routes/type'));
+
 // request body will have the following fields:
 // municipality, fullName, cin, phoneNumber, email, type, text, keywords
 app.post('/', async (req, res) => {
@@ -26,6 +31,8 @@ app.post('/', async (req, res) => {
 
 	try {
 		req.body.municipality = req.body.municipality.toLowerCase();
+		req.body.keywords = req.body.keywords.map(keyword => keyword.toLowerCase());
+		req.body.type = req.body.type.toLowerCase();
 
 		// report will contain the following fields: id, text, municipalityId, typeId, userId
 		let municipality = await Municipality.findOne({name: req.body.municipality})
@@ -90,7 +97,7 @@ app.get('/', async (req, res) => {
 	}
 });
 
-app.get('/:id', async (req, res) => {
+app.get('/:id/', async (req, res) => {
 	try {
 		const report = await Report.findById(req.params.id).populate('municipalityId').populate('typeId').populate('userId').exec();
 		res.status(200).send(report);
@@ -110,7 +117,8 @@ app.delete('/:id', async (req, res) => {
 	}
 });
 
-mongoose.connect(process.env.DATABASE_URI).then(() => {
+const options = {};
+mongoose.connect(process.env.DATABASE_URI, options).then(() => {
 	console.log('Connected to MongoDB');
 	app.listen(PORT, () => {
 		console.log('Server is running on port ' + PORT);
